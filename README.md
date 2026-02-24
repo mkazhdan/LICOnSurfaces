@@ -3,7 +3,6 @@
 <a href="#LINKS">links</a>
 <a href="#EXECUTABLES">executables</a>
 <a href="#USAGE">usage</a>
-<a href="#LIBRARY">library</a>
 <a href="#COMPILATION">compilation</a>
 <a href="#CHANGES">changes</a>
 <a href="#SUPPORT">support</a>
@@ -59,7 +58,6 @@ This software supports line integral convolution on surfaces using anisotropic d
 <a name="EXECUTABLES"><b>EXECUTABLES</b></a><br>
 <UL>
 
-
 <DL>
 <DETAILS>
 <SUMMARY>
@@ -107,6 +105,7 @@ The default value for this argument is <CODE>0</CODE>.
 <a name="USAGE"><b>USAGE EXAMPLES (WITH SAMPLE DATA)</b></a><br>
 For testing purposes, two vector fields on the <A="HREF="https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/">Bob</A> model are provided -- <A HREF="Data/bob_isotropic.faces.ply">bob_isotropic.faces.ply</A> (with vectors stored at faces) and <A HREF="Data/bob_isotropic.vertices.ply">bob_isotropic.vertices.ply</A> (with vectors stored at vertices).
 
+<UL>
 
 <dl>
 <details>
@@ -130,9 +129,7 @@ If more pronounced stream-lines are desired, the gradient scaling term can be in
 <a name="COMPILATION"><b>COMPILATION AND EXECUTION</b></a><br>
 </summary>
 <UL>
-<LI>The Windows executables require both the <B>glew</B> and <B>glut</B> dynamically linked libraries to run. These can be found <A HREF="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/TSP.DLLs.zip">here</A> and should be included either in the directory with the executables, or in the directory from which the executables are run.</LI>
-<LI>Compiling under Windows requires both the <B>glew</B> and <B>glut</B> libraries. These can be found <A HREF="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/TSP.LIBs.zip">here</A> and should be placed in the output directory for linkage.</LI></LI>
-<LI>Compilation requires a linear solver. By default, we use the <CODE>LDLt</CODE> implementation provided by  <A HREF="https://eigen.tuxfamily.org/">Eigen</A>. If you have <A HREF="https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2024-1/intel-oneapi-math-kernel-library-onemkl.html">Intel's oneMKL</A>, we encourage you to use Eigen's <CODE>Pardiso</CODE> implementation. To to this you will need to enable the <CODE>USE_EIGEN_PARDISO</CODE> flag in <CODE>include/Src/PreProcessing.h</CODE>
+<LI>Compilation requires a linear solver. By default, we use the <CODE>LLt</CODE> implementation provided by  <A HREF="https://eigen.tuxfamily.org/">Eigen</A>. If you have <A HREF="https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2024-1/intel-oneapi-math-kernel-library-onemkl.html">Intel's oneMKL</A>, we encourage you to use Eigen's <CODE>Pardiso</CODE> implementation. To to this you will need to enable the <CODE>USE_EIGEN_PARDISO</CODE> flag in <CODE>include/Src/PreProcessing.h</CODE>
 </UL>
 </details>
 
