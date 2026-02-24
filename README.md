@@ -106,51 +106,6 @@ The default value for this argument is <CODE>0</CODE>.
 <hr>
 <a name="USAGE"><b>USAGE EXAMPLES (WITH SAMPLE DATA)</b></a><br>
 For testing purposes, two vector fields on the <A="HREF="https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/">Bob</A> model are provided -- <A HREF="Data/bob_isotropic.faces.ply">bob_isotropic.faces.ply</A> (with vectors stored at faces) and <A HREF="Data/bob_isotropic.vertices.ply">bob_isotropic.vertices.ply</A> (with vectors stored at vertices).
-<ul>
-
-<dl>
-<details>
-<summary>
-<font size="+1"><b>TextureFiltering</b></font>
-</summary>
-To run this executable you must specify the input mesh as well as the texture itself:
-<blockquote><code>% Bin/*/TextureFiltering --in ../TSP.Data/David/david.ply ../TSP.Data/David/david.normap</code></blockquote>
-This opens a viewer allowing the user to prescribe both global gradient modulation weights (through the slider) and local modulation weights (through a paint-brush interface, by depressing the [SHIFT] key and dragging with the left mouse button to smooth and the right mouse button to sharpen).<BR>
-You can also bypass the viewer and output a globally sharpened/smoothed texture to a file:
-<blockquote><code>% Bin/*/TextureFiltering --in ../TSP.Data/Julius/julius.ply ../TSP.Data/Julius/julius.normap --out julius.smooth.normap --modulation 0 --interpolation 100</code></blockquote>
-Here a modulation weight less than 1 indicates that gradients should be dampened (resulting in smoothing) and a small interpolation weight reduces the interpolation penalty, exaggerating the smoothing.
-</details>
-</dl>
-
-<dl>
-<details>
-<summary>
-<font size="+1"><b>TextureStitching</b></font>
-</summary>
-This viewer can be run in one of two modes:
-<OL>
-<LI>
-In addition to the input mesh, specify a (single) composite texture and mask.
-If adjacent texels share the same mask color, they are assumed to come from the same source, and the gradient between them is preserved.
-Otherwise, the gradient is set to zero. Additionally, a mask color of black is reserved to indicate that the texel value is unknown.<BR>
-For example, running
-<blockquote><code>% Bin/*/TextureFiltering --in Rooster/rooster.ply ../TSP.Data/Rooster/texels.png --mask ../TSP.Data/Rooster/mask.png</code></blockquote>
-opens a viewer showing the stitched texture on the left and the composite texture on the right.
-<LI>
-In addition to the input mesh, specify (multiple) partial textures and associated confidence maps.
-The code blends the gradients in regions of overlap, with weights determined by the mask.
-Texel and confidence file names are specified using integer format specifiers, with zero-indexing.
-Colors are transformed to scalar confidence values by computing the gray-scale value and normalizing to the range [0,1].<br>
-For example, running
-<blockquote><code>% Bin/*/TextureFiltering --in Rooster/rooster.ply ../TSP.Data/Rooster/texels-%02d.png --mask ../TSP.Data/Rooster/mask-%02d.png --multi</code></blockquote>
-opens a viewer showing the stitched texture on the left and the first partial textures on the right.<BR>
-Pressing the 't' key toggles forward through the partial textures and pressing 'T' toggles backwards.<BR>
-Holding [SHIFT] and clicking on the stitched model replaces the blended gradients under the paint-brush with the gradients from the currently visualized partial-texture.<BR>
-</OL>
-You can also bypass the viewer and output the stitched texture to a file:
-<blockquote><code>% Bin/*/TextureStitching --in Rooster/rooster.ply ../TSP.Data/Rooster/texels-%02d.png --mask ../TSP.Data/Rooster/mask-%02d.png --multi --out stitched.png</code></blockquote>
-</details>
-</dl>
 
 
 <dl>
@@ -158,41 +113,11 @@ You can also bypass the viewer and output the stitched texture to a file:
 <summary>
 <font size="+1"><b>LineIntegralConvolution</b></font>
 </summary>
-To run this executable you must specify the input mesh:
-<blockquote><code>% Bin/*/LineIntegralConvolution --in ../TSP.Data/Fertility/fertility.ply</code></blockquote>
-This opens a viewer visualizing a vector-field by performing anisotropic diffusion to simulate line-integral-convolution. (To start the iterative solver, press the [SPACE] key.) By default, the vector-field used is defined by the (maximal) principal curvature directions.<BR>
-You can also explicitly prescribe the vector-field:
-<blockquote><code>% Bin/*/LineIntegralConvolution --in ../TSP.Data/Fertility/fertility.ply --inVF ../TSP.Data/Fertility/harmonic-001.vf --intrinsicVF</code></blockquote>
-(The <b>--intrinsicVF</b> flag is required because the vector-field in the file is represented using two intrinsic coordinates per triangle instead of three extrinsic ones.)<BR>
-You can also bypass the viewer and output the line-integral-convolution texture to a file:
-<blockquote><code>% Bin/*/LineIntegralConvolution --in ../TSP.Data/Hand/hand.ply --minimal --out hand.minimal.jpg</code></blockquote>
-Here a visualization of the minimal principal curvature directions is written out as a texture image.
-</details>
-</dl>
-
-<dl>
-<details>
-<summary>
-<font size="+1"><b>Geodesics</b></font>
-</summary>
-To run this executable you must specify the input mesh:
-<blockquote><code>% Bin/*/Geodesics --in ../TSP.Data/Bunny/bunny.ply</code></blockquote>
-This opens a viewer allowing the user to prescribe the source of the geodesic by holding the [SHIFT] button and clicking on the source location with either mouse button.
-</details>
-</dl>
-
-
-<dl>
-<details>
-<summary>
-<font size="+1"><b>ReactionDiffusion</b></font>
-</summary>
-To run this executable you must specify the input mesh:
-<blockquote><code>% Bin/*/ReactionDiffusion --in ../TSP.Data/Camel/camel.ply</code></blockquote>
-This opens a viewer visualizing the "stripes" reaction-diffusion process. (To start the process, press the [SPACE] key.)<BR>
-You can also bypass the viewer and output the reaction-diffusion texture to a file:
-<blockquote><code>% Bin/*/ReactionDiffusion --in ../TSP.Data/David/david.ply --out david.dots.jpg --dots --outSteps 2000</code></blockquote>
-Here a "dots" pattern is written out to an image. (Empirically, we have found that this reaction-diffusion process takes more steps to converge, hence the larger number of steps.)
+To run this executable you specify the input mesh as well as the output:
+<blockquote><code>% Bin/*/LineIntegralConvolution --in Data/bob_isotropic.vertices.ply --out lic.ply --sub 2</code></blockquote>
+As the Bob model is low-resolution, we also specified that two passes of subdivision should be performed.<BR>
+If more pronounced stream-lines are desired, the gradient scaling term can be increased:
+<blockquote><code>% Bin/*/LineIntegralConvolution --in Data/bob_isotropic.faces.ply --out lic.ply --sub 2 --sScale 2048</code></blockquote>
 </details>
 </dl>
 
