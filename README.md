@@ -12,15 +12,16 @@
 This software supports line integral convolution on surfaces using anisotropic diffusion. <hr>
 <a name="LINKS"><b>LINKS</b></a><br>
 <ul>
-<b>Papers:</b>
+<b>Papers:</b><BR>
 <A HREF="https://www.cs.jhu.edu/~misha/MyPapers/SIG22a.pdf">[Bunge, Herholz, Sorkine-Hornung, Botsch, and Kazhdan, 2022]</A><BR>
 <a href="http://www.cs.jhu.edu/~misha/MyPapers/SIG18.pdf">[Prada, Kazhdan, Chuang, and Hoppe, 2018]</a><BR>
 <a href="https://ieeexplore.ieee.org/document/856995">[Diewald, Preusser, and Rumpf, 2000]</a>
 <br><BR>
 <a href="https://dl.acm.org/doi/10.1145/166117.166151">[Cabral and Leedom, 1993]</a>
 </UL>
+<!--
 <b>Executables: </b>
-<!--<a href="TSP.x64.zip">Win64</a><br>
+<a href="TSP.x64.zip">Win64</a><br>
 <b>Source Code:</b>
 <a href="TSP.Source.zip">ZIP</a>
 <a href="https://github.com/mkazhdan/LICOnSurfaces">GitHub</a><br>
