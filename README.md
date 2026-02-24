@@ -5,7 +5,6 @@
 <a href="#USAGE">usage</a>
 <a href="#COMPILATION">compilation</a>
 <a href="#CHANGES">changes</a>
-<a href="#SUPPORT">support</a>
 </center>
 <hr>
 This software supports line integral convolution on surfaces using anisotropic diffusion. <hr>
