@@ -16,7 +16,7 @@ This software supports line integral convolution on surfaces using anisotropic d
 <A HREF="https://www.cs.jhu.edu/~misha/MyPapers/SIG22a.pdf">[Bunge, Herholz, Sorkine-Hornung, Botsch, and Kazhdan, 2022]</A><BR>
 <a href="http://www.cs.jhu.edu/~misha/MyPapers/SIG18.pdf">[Prada, Kazhdan, Chuang, and Hoppe, 2018]</a><BR>
 <a href="https://ieeexplore.ieee.org/document/856995">[Diewald, Preusser, and Rumpf, 2000]</a>
-<br><BR>
+<BR>
 <a href="https://dl.acm.org/doi/10.1145/166117.166151">[Cabral and Leedom, 1993]</a>
 </UL>
 <!--
@@ -60,7 +60,7 @@ This software supports line integral convolution on surfaces using anisotropic d
 <ul>
 
 
-<dl>
+<DL>
 <details>
 <summary>
 <font size="+1"><b>LineIntegralConvolution</b></font>:
@@ -73,6 +73,7 @@ The mesh is assumed to be reprsented in <A href="http://www.cc.gatech.edu/projec
 <LI>As per-vertex quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 <LI>As per-face quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 </UL>
+</DL>
 
 <hr>
 <a name="USAGE"><b>USAGE EXAMPLES (WITH SAMPLE DATA)</b></a><br>
