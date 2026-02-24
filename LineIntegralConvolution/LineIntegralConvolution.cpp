@@ -60,7 +60,7 @@ CmdLineParameter< unsigned int >
 	SoftMaxP( "p" , 8 );
 
 CmdLineParameter< double >
-	SharpeningStepSize( "sStep" , 1e-5 ) ,
+	SharpeningWeight( "sWeight" , 1e-5 ) ,
 	DiffusionStepSize( "dStep" , 2.e-3 ) ,
 	AnisotropyExponent( "aExp" , 8. ) ,
 	AnisotropyScale( "aScale" , 1e8 ) ,
@@ -78,7 +78,7 @@ std::vector< CmdLineReadable * > params =
 	&AnisotropyExponent ,
 	&Degree ,
 	&DiffusionStepSize ,
-	&SharpeningStepSize ,
+	&SharpeningWeight ,
 	&Sharpen ,
 	&SoftMaxP ,
 	&RandomSeed ,
@@ -98,7 +98,7 @@ ShowUsage
 	printf( "\t[--%s <output mesh>]\n" , Out.name.c_str() );
 	printf( "\t[--%s <element degree>=%d]\n" , Degree.name.c_str() , Degree.value );
 	printf( "\t[--%s <diffusion step size>=%e]\n" , DiffusionStepSize.name.c_str() , DiffusionStepSize.value );
-	printf( "\t[--%s <sharpening step size>=%e]\n" , SharpeningStepSize.name.c_str() , SharpeningStepSize.value );
+	printf( "\t[--%s <sharpening step size>=%e]\n" , SharpeningWeight.name.c_str() , SharpeningWeight.value );
 	printf( "\t[--%s <anisotropy exponent>=%f]\n" , AnisotropyExponent.name.c_str() , AnisotropyExponent.value );
 	printf( "\t[--%s <anisotropy scale>=%e]\n" , AnisotropyScale.name.c_str() , AnisotropyScale.value );
 	printf( "\t[--%s <sharpening gradient scale>=%e]\n" , Sharpen.name.c_str() , Sharpen.value );
@@ -245,9 +245,9 @@ Execute
 	if( Sharpen.value>0 )
 	{
 		Miscellany::PerformanceMeter pMeter;
-		LLtSolver solver( M + S * SharpeningStepSize.value );
+		LLtSolver solver( M + S * SharpeningWeight.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
-		x = solver.solve( M * x + S * x * SharpeningStepSize.value * Sharpen.value );
+		x = solver.solve( M * x + S * x * SharpeningWeight.value * Sharpen.value );
 		if( Verbose.set ) std::cout << pMeter( "Solved sharpening" ) << std::endl;
 	}
 

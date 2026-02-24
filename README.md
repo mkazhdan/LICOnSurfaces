@@ -82,8 +82,11 @@ While color values are output per-vertex, using a higher degree interpolant gene
 Degrees <CODE>1</CODE>, <CODE>2</CODE>, and <CODE>3</CODE> are supported.<BR>
 The default value for this argument is <CODE>2</CODE>.
 <dt>[<b>--sharpen</b> &lt;<i>gradient modulation weight</i>&gt;]
-<dd> This floating point value specifies the scale applied to the gradients when performing sharpening.<BR>
+<dd> This floating point value specifies the scale applied to the gradients when performing sharpening. (Larger values accentuate the stream-lines more.)<BR>
 The default value for this argument is <CODE>1024</CODE>.
+<dt>[<b>--sWeight</b> &lt;<i>sharpening weight</i>&gt;]
+<dd> This floating point value specifies the weight to be given to fitting the gradient term when performing sharpening. (Smaller values focus the sharpening on higher frequencies.).<BR>
+The default value for this argument is <CODE>10<SUP>-5</SUP></CODE>.
 </DETAILS>
 </DL>
 
