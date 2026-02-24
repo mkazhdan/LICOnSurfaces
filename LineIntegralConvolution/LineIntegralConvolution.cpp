@@ -315,6 +315,7 @@ main
 
 	std::vector< SimplexIndex< K > > simplices;
 	std::vector< Point< double , Dim > > vertices , faceVectorField , vertexVectorField;
+	std::vector< GregTurk::PlyProperty > properties;
 
 	int file_type;
 	{
@@ -326,9 +327,10 @@ main
 		std::vector< bool > vertexReadParams , faceReadParams;
 		std::vector< Vertex > _vertices;
 		std::vector< PlyVFFace > _faces;
-		std::vector< GregTurk::PlyProperty > properties = PlyVFFace::ReadProperties();
-		file_type = PLY::ReadPolygons( In.value , factory , _vertices , _faces , &properties[0] , static_cast< unsigned int >( properties.size() ) , vertexReadParams , faceReadParams , nullptr );
-	
+		std::vector< GregTurk::PlyProperty > _properties = PlyVFFace::ReadProperties();
+		file_type = PLY::ReadPolygons( In.value , factory , _vertices , _faces , &_properties[0] , static_cast< unsigned int >( _properties.size() ) , vertexReadParams , faceReadParams , nullptr );
+		for( unsigned int i=0 ; i<_properties.size() ; i++ ) if( faceReadParams[i] ) properties.push_back( _properties[i] );
+
 		simplices.resize( _faces.size() );
 		for( unsigned int i=0 ; i<_faces.size() ; i++ )
 		{
@@ -338,6 +340,7 @@ main
 
 		vertices.resize( _vertices.size() );
 		for( unsigned int i=0 ; i<vertices.size() ; i++ ) vertices[i] = _vertices[i].template get<0>();
+
 
 		if( factory.template plyValidReadProperties< 1 >( vertexReadParams ) )
 		{
@@ -421,7 +424,6 @@ main
 				_vertices[i].get<0>() = vertices[i];
 				_vertices[i].get<1>() = ClampColor( colors[i] ) * 255.;
 			}
-			std::vector< GregTurk::PlyProperty > properties = PlyVFFace::Properties();
 			std::vector< PlyVFFace > _faces( simplices.size() );
 			for( unsigned int i=0 ; i<simplices.size() ; i++ )
 			{

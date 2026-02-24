@@ -6,7 +6,7 @@ programs = LineIntegralConvolution
 # Allow "make -j" to operate in parallel over the programs.
 all: $(programs)
 $(programs):
-	$(MAKE) -C $@ COMPILER=$(COMPILER) NO_VISUAL=$(NO_VISUAL) USE_PARDISO=$(USE_PARDISO)
+	$(MAKE) -C $@ COMPILER=$(COMPILER)
 
 programs_debug = $(foreach n,$(programs),debug_$(n))  # pseudo-dependency to allow "make -j" parallelism
 debug: $(programs_debug)
