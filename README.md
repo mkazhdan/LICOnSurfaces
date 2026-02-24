@@ -57,15 +57,15 @@ This software supports line integral convolution on surfaces using anisotropic d
 -->
 <hr>
 <a name="EXECUTABLES"><b>EXECUTABLES</b></a><br>
-<ul>
+<UL>
 
 
 <DL>
-<details>
-<summary>
+<DETAILS>
+<SUMMARY>
 <font size="+1"><b>LineIntegralConvolution</b></font>:
 Generates per-vertex colors visualizing the streamlines of a vector field. The vector field is obtained by seeding the vertices with random colors and performing anistropic diffusion along the vector-field direction.<BR>
-</summary>
+</SUMMARY>
 <dt><b>--in</b> &lt;<i>input mesh</i>&gt;</dt>
 <dd> This strings specifies the the name of the mesh.<BR>
 The mesh is assumed to be reprsented in <A href="http://www.cc.gatech.edu/projects/large_models/ply.html">PLY</A> format, with the vector fields represented in one of two ways:
@@ -73,8 +73,11 @@ The mesh is assumed to be reprsented in <A href="http://www.cc.gatech.edu/projec
 <LI>As per-vertex quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 <LI>As per-face quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 </UL>
-</details>
+</DETAILS>
 </DL>
+
+</UL>
+
 
 <hr>
 <a name="USAGE"><b>USAGE EXAMPLES (WITH SAMPLE DATA)</b></a><br>
