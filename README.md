@@ -17,7 +17,8 @@ This software supports line integral convolution on surfaces using anisotropic d
 <a href="http://www.cs.jhu.edu/~misha/MyPapers/SIG18.pdf">[Prada, Kazhdan, Chuang, and Hoppe, 2018]</a>,
 <a href="https://ieeexplore.ieee.org/document/856995">[Diewald, Preusser, and Rumpf, 2000]</a>
 <br>
-<a href="https://dl.acm.org/doi/10.1145/166117.166151">[Cabral and Leedom, 1993]</a>,
+<a href="https://dl.acm.org/doi/10.1145/166117.166151">[Cabral and Leedom, 1993]</a>
+</UL>
 <b>Executables: </b>
 <!--<a href="TSP.x64.zip">Win64</a><br>
 <b>Source Code:</b>
