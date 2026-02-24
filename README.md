@@ -73,6 +73,7 @@ The mesh is assumed to be reprsented in <A href="http://www.cc.gatech.edu/projec
 <LI>As per-vertex quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 <LI>As per-face quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 </UL>
+</details>
 </DL>
 
 <hr>
