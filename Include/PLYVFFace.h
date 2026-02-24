@@ -48,6 +48,7 @@ namespace MishaK
 			Index& operator[] ( unsigned int idx );
 			const Index & operator[] ( unsigned int idx ) const;
 			static std::vector< GregTurk::PlyProperty > Properties( void );
+			static std::vector< GregTurk::PlyProperty > ReadProperties( void );
 		};
 #include "PLYVFFace.inl"
 	}

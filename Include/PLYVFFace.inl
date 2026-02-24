@@ -76,3 +76,16 @@ std::vector< GregTurk::PlyProperty > PlyVFFace< Index , Real , Dim >::Properties
 	for( unsigned int d=0 ; d<Dim ; d++ ) properties[d+1] = GregTurk::PlyProperty( "vf_" + std::to_string(d) , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*d , 0 , 0 , 0 , 0 );
 	return properties;
 };
+
+template< typename Index , typename Real , unsigned int Dim >
+std::vector< GregTurk::PlyProperty > PlyVFFace< Index , Real , Dim >::ReadProperties( void )
+{
+	std::vector< GregTurk::PlyProperty > properties( Dim+1 );
+	properties[0] = GregTurk::PlyProperty( "vertex_indices" , PLY::Type< Index >() ,  PLY::Type< Index >() , (int)offsetof( PlyVFFace , vertices ) , 1 , PLY_INT , PLY_INT , (int)offsetof( PlyVFFace , nr_vertices ) );
+	for( unsigned int d=0 ; d<Dim ; d++ ) properties[d+1] = GregTurk::PlyProperty( "vf_" + std::to_string(d) , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*d , 0 , 0 , 0 , 0 );
+	if( Dim>0 ) properties.push_back( GregTurk::PlyProperty( "vx" , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*0 , 0 , 0 , 0 , 0 ) );
+	if( Dim>1 ) properties.push_back( GregTurk::PlyProperty( "vy" , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*1 , 0 , 0 , 0 , 0 ) );
+	if( Dim>2 ) properties.push_back( GregTurk::PlyProperty( "vz" , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*2 , 0 , 0 , 0 , 0 ) );
+	if( Dim>3 ) properties.push_back( GregTurk::PlyProperty( "vw" , PLY::Type< Real >() , PLY::Type< Real >() , (int)offsetof( PlyVFFace , v.coords ) + sizeof(Real)*3 , 0 , 0 , 0 , 0 ) );
+	return properties;
+}

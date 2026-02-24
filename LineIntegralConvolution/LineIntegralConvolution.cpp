@@ -326,7 +326,7 @@ main
 		std::vector< bool > vertexReadParams , faceReadParams;
 		std::vector< Vertex > _vertices;
 		std::vector< PlyVFFace > _faces;
-		std::vector< GregTurk::PlyProperty > properties = PlyVFFace::Properties();
+		std::vector< GregTurk::PlyProperty > properties = PlyVFFace::ReadProperties();
 		file_type = PLY::ReadPolygons( In.value , factory , _vertices , _faces , &properties[0] , static_cast< unsigned int >( properties.size() ) , vertexReadParams , faceReadParams , nullptr );
 	
 		simplices.resize( _faces.size() );
@@ -344,7 +344,7 @@ main
 			vertexVectorField.resize( _vertices.size() );
 			for( unsigned int i=0 ; i<_vertices.size() ; i++ ) vertexVectorField[i] = _vertices[i].template get<1>();
 		}
-		else if( faceReadParams[0] && faceReadParams[1] && faceReadParams[2] && faceReadParams[3] )
+		else if( faceReadParams[0] && ( faceReadParams[1] || faceReadParams[4] ) && ( faceReadParams[2] || faceReadParams[5] ) && ( faceReadParams[3] || faceReadParams[6] ) )
 		{
 			faceVectorField.resize( simplices.size() );
 			for( unsigned int i=0 ; i<simplices.size() ; i++ ) faceVectorField[i] = _faces[i].v;
