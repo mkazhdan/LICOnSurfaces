@@ -64,15 +64,23 @@ This software supports line integral convolution on surfaces using anisotropic d
 <DETAILS>
 <SUMMARY>
 <font size="+1"><b>LineIntegralConvolution</b></font>:
-Generates per-vertex colors visualizing the streamlines of a vector field. The vector field is obtained by seeding the vertices with random colors and performing anistropic diffusion along the vector-field direction.<BR>
+Generates per-vertex colors visualizing the streamlines of a vector field. The vector field is obtained by seeding the nodes with random colors and performing anistropic diffusion along the vector-field direction.<BR>
 </SUMMARY>
 <dt><b>--in</b> &lt;<i>input mesh</i>&gt;</dt>
-<dd> This strings specifies the the name of the mesh.<BR>
-The mesh is assumed to be reprsented in <A href="http://www.cc.gatech.edu/projects/large_models/ply.html">PLY</A> format, with the vector fields represented in one of two ways:
+<dd> This mandatory string specifies the name of the file from which the mesh will be read.<BR>
+The mesh is assumed to be represented in <A href="http://www.cc.gatech.edu/projects/large_models/ply.html">PLY</A> format, with the vector fields represented in one of two ways:
 <UL>
-<LI>As per-vertex quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
-<LI>As per-face quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> tags -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
+<LI>As per-vertex quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> property names -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
+<LI>As per-face quantities, encoded with the <CODE>vf_0</CODE>, <CODE>vf_1</CODE>, and <CODE>vf_2</CODE> property names -- corresponding to the <CODE>x</CODE>-, <CODE>y</CODE>-, and <CODE>z</CODE>-components of the vectors.
 </UL>
+<dt>[<b>--out</b> &lt;<i>output mesh</i>&gt;</dt>]
+<dd> This strings specifies the the name of the file to which the mesh will be written.<BR>
+The mesh is assumed to be represented in <A href="http://www.cc.gatech.edu/projects/large_models/ply.html">PLY</A> format, with colors encoded using the <CODE>red</CODE>, <CODE>green</CODE>, and <CODE>blue</CODE> property names.
+<dt>[<b>--degree</b> &lt;<i>Lagrange interpolant degree</i>&gt;</dt>]
+<dd> This integer specifies the the degree of the Lagrange interpolant used for performing the anisotropic diffusion<BR>
+While color values are output per-vertex, using a higher degree interpolant generates finer feature lines.<BR>
+Degrees <CODE>1</CODE>, <CODE>2</CODE>, and <CODE>3</CODE> are supported.<BR>
+The default value for this argument is <CODE>2</CODE>.
 </DETAILS>
 </DL>
 
