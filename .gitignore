@@ -1,0 +1,13 @@
+.vs/
+*.V*/
+Bin/
+*.filters
+*.user
+*.o
+*.tmp
+*/x64/
+x64/
+Notes/
+*.pdb
+*.ply
+*.xf

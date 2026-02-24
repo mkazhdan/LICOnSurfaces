@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Include/">
+    <File Path="Include/PLYVFFace.h" />
+    <File Path="Include/PLYVFFace.inl" />
+    <File Path="Include/PreProcess.h" />
+  </Folder>
+  <Project Path="LineIntegralConvolution/LineIntegralConvolution.vcxproj" Id="8ecefae6-a71c-4d4d-8441-4da4eba5d3a1" />
+</Solution>
