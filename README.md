@@ -1,7 +1,7 @@
 <center><h2>Line Integral Convolution on Surfaces (Version 1.00)</h2></center>
 <center>
 <a href="#LINKS">links</a>
-<a href="#EXECUTABLES">executables</a>
+<a href="#EXECUTABLE">executable</a>
 <a href="#USAGE">usage</a>
 <a href="#COMPILATION">compilation</a>
 <a href="#CHANGES">changes</a>
@@ -18,44 +18,9 @@ This software supports line integral convolution on surfaces using anisotropic d
 <BR>
 <a href="https://dl.acm.org/doi/10.1145/166117.166151">[Cabral and Leedom, 1993]</a>
 </UL>
-<!--
-<b>Executables: </b>
-<a href="TSP.x64.zip">Win64</a><br>
-<b>Source Code:</b>
-<a href="TSP.Source.zip">ZIP</a>
-<a href="https://github.com/mkazhdan/LICOnSurfaces">GitHub</a><br>
-<B>Data:</B>
-<A HREF="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/TSP.Data.zip">ZIP</A><br>
-<b>Older Versions:</b>
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version9.55/">V9.55</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version9.50/">V9.50</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version9.10/">V9.10</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version9.05/">V9.05</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version9.00/">V9.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version8.00/">V8.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version7.00/">V7.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version6.06/">V6.06</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version6.00/">V6.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version5.01/">V5.01</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version5.00/">V5.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.75/">V4.75</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.60/">V4.60</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.50/">V4.50</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.08/">V4.08</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.07/">V4.07</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.06/">V4.06</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.05/">V4.05</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.03/">V4.03</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.02/">V4.02</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.01/">V4.01</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version4.00/">V4.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version3.00/">V3.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version2.00/">V2.00</a>,
-<a href="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/Version1.00/">V1.00</a>
-</ul>
--->
+
 <hr>
-<a name="EXECUTABLES"><b>EXECUTABLES</b></a><br>
+<a name="EXECUTABLE"><b>EXECUTABLE</b></a><br>
 <UL>
 
 <DL>
@@ -126,7 +91,7 @@ If more pronounced stream-lines are desired, the gradient scaling term can be in
 <hr>
 <details>
 <summary>
-<a name="COMPILATION"><b>COMPILATION AND EXECUTION</b></a><br>
+<a name="COMPILATION"><b>COMPILATION</b></a><br>
 </summary>
 <UL>
 <LI>Compilation requires a linear solver. By default, we use the <CODE>LLt</CODE> implementation provided by  <A HREF="https://eigen.tuxfamily.org/">Eigen</A>. If you have <A HREF="https://www.intel.com/content/www/us/en/docs/oneapi/programming-guide/2024-1/intel-oneapi-math-kernel-library-onemkl.html">Intel's oneMKL</A>, we encourage you to use Eigen's <CODE>Pardiso</CODE> implementation. To to this you will need to enable the <CODE>USE_EIGEN_PARDISO</CODE> flag in <CODE>include/Src/PreProcessing.h</CODE>
