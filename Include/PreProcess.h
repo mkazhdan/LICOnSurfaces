@@ -29,6 +29,8 @@ DAMAGE.
 
 #define NEW_CODE
 
+#undef USE_EIGEN_PARDISO
+
 #include <Eigen/Sparse>
 #ifdef USE_EIGEN_PARDISO
 #include <Eigen/PardisoSupport>

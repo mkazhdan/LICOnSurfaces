@@ -355,7 +355,7 @@ main
 			faceVectorField.resize( simplices.size() );
 		}
 	}
-#if 1
+
 	if( vertexVectorField.size() )
 	{
 		for( unsigned int i=0 ; i<Subdivide.value ; i++ ) PlanarSubdivide( vertices , simplices , vertexVectorField );
@@ -368,13 +368,12 @@ main
 		}
 	}
 	else for( unsigned int i=0 ; i<Subdivide.value ; i++ ) PlanarSubdivide( vertices , simplices , faceVectorField );
-#endif
 
 	if( Verbose.set ) std::cout << "Vertices / Triangles: " << vertices.size() << " / " << simplices.size() << std::endl;
 
 	Miscellany::Timer timer;
 	std::vector< Point< double , 3 > > colors;
-#if 1
+
 	{
 		Miscellany::PerformanceMeter pMeter;
 		switch( Degree.value )
@@ -386,9 +385,6 @@ main
 		}
 		if( Verbose.set ) std::cout << pMeter( "Performed LIC" ) << std::endl;
 	}
-#else
-	colors.resize( vertices.size() );
-#endif
 
 	auto ClampColor = []( Point< double , 3 > c )
 	{
