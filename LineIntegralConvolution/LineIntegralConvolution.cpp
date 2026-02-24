@@ -141,7 +141,7 @@ PlanarSubdivide
 		}
 	}
 
-	for( unsigned int i=simplices.size() ; i!=0 ; i-- )
+	for( unsigned int i=static_cast< unsigned int >( simplices.size() ) ; i!=0 ; i-- )
 	{
 		unsigned int idx = i-1;
 		unsigned int edges[K+1];
