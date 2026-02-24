@@ -85,7 +85,7 @@ The default value for this argument is <CODE>2</CODE>.
 <dt>[<b>--dStep</b> &lt;<i>diffusion step-size</i>&gt;]
 <dd> This floating point value specifies the the extent of the diffusion. (Smaller values result in visualizations with shorter stream-lines.)<BR>
 The default value for this argument is <CODE>10<SUP>-5</SUP></CODE>.
-<dt>[<b>--sharpen</b> &lt;<i>gradient modulation weight</i>&gt;]
+<dt>[<b>--sScale</b> &lt;<i>gradient scaling term</i>&gt;]
 <dd> This floating point value specifies the scale applied to the gradients when performing sharpening. (Larger values accentuate the stream-lines more.)<BR>
 The default value for this argument is <CODE>1024</CODE>.
 <dt>[<b>--sWeight</b> &lt;<i>sharpening weight</i>&gt;]
@@ -94,6 +94,9 @@ The default value for this argument is <CODE>10<SUP>-5</SUP></CODE>.
 <dt>[<b>--p</b> &lt;<i>p-norm</i>&gt;]
 <dd> This integer specifies the <I>p</I>-norm used in estimating the scale of the vector field. (Larger values normalize using a value closer to the maximum vector length.)<BR>
 The default value for this argument is <CODE>8</CODE>.
+<dt>[<b>--sub</b> &lt;<i>iterations of 1-to-4 planar subdivision</i>&gt;]
+<dd> This integer specifies the number of iterations of planar 1-to-4 subdivision to be performed before generating the per-vertex colors.<BR>
+The default value for this argument is <CODE>0</CODE>.
 </DETAILS>
 </DL>
 
@@ -102,9 +105,7 @@ The default value for this argument is <CODE>8</CODE>.
 
 <hr>
 <a name="USAGE"><b>USAGE EXAMPLES (WITH SAMPLE DATA)</b></a><br>
-For testing purposes, a number of <A HREF="http://www.cs.jhu.edu/~misha/Code/TextureSignalProcessing/TSP.Data.zip">textured mapped models</A> are provided (using the <U>.ply</U> extension).
-Of these, <I>David</I> and <I>Julius</I> include normal maps (using the <U>.normap</U> extension), <I>Fertility</I> includes the eight harmonic vector-fields (using the <U>.vf</U> extension), and <I>Rooster</I> uses (partial) texture maps as well as a mask image and confidence maps.
-
+For testing purposes, two vector fields on the <A="HREF="https://www.cs.cmu.edu/~kmcrane/Projects/ModelRepository/">Bob</A> model are provided -- <A HREF="Data/bob_isotropic.faces.ply">bob_isotropic.faces.ply</A> (with vectors stored at faces) and <A HREF="Data/bob_isotropic.vertices.ply">bob_isotropic.vertices.ply</A> (with vectors stored at vertices).
 <ul>
 
 <dl>

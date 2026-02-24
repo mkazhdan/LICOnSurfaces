@@ -7,7 +7,4 @@ Bin/
 *.tmp
 */x64/
 x64/
-Notes/
 *.pdb
-*.ply
-*.xf

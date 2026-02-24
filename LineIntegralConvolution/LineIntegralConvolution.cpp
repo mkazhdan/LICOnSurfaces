@@ -57,6 +57,7 @@ CmdLineParameter< std::string >
 CmdLineParameter< unsigned int >
 	RandomSeed( "seed" , 0 ) ,
 	Degree( "degree" , 2 ) ,
+	Subdivide( "sub" , 0 ) ,
 	SoftMaxP( "p" , 8 );
 
 CmdLineParameter< double >
@@ -64,7 +65,7 @@ CmdLineParameter< double >
 	DiffusionStepSize( "dStep" , 2.e-3 ) ,
 	AnisotropyExponent( "aExp" , 8. ) ,
 	AnisotropyScale( "aScale" , 1e8 ) ,
-	Sharpen( "sharpen" , 1024 );
+	SharpeningScale( "sScale" , 1024 );
 
 CmdLineReadable
 	GrayScale( "gray" ) ,
@@ -79,10 +80,11 @@ std::vector< CmdLineReadable * > params =
 	&Degree ,
 	&DiffusionStepSize ,
 	&SharpeningWeight ,
-	&Sharpen ,
+	&SharpeningScale ,
 	&SoftMaxP ,
 	&RandomSeed ,
 	&GrayScale ,
+	&Subdivide ,
 	&Verbose
 };
 
@@ -98,15 +100,61 @@ ShowUsage
 	printf( "\t[--%s <output mesh>]\n" , Out.name.c_str() );
 	printf( "\t[--%s <element degree>=%d]\n" , Degree.name.c_str() , Degree.value );
 	printf( "\t[--%s <diffusion step size>=%e]\n" , DiffusionStepSize.name.c_str() , DiffusionStepSize.value );
-	printf( "\t[--%s <sharpening step size>=%e]\n" , SharpeningWeight.name.c_str() , SharpeningWeight.value );
 	printf( "\t[--%s <anisotropy exponent>=%f]\n" , AnisotropyExponent.name.c_str() , AnisotropyExponent.value );
 	printf( "\t[--%s <anisotropy scale>=%e]\n" , AnisotropyScale.name.c_str() , AnisotropyScale.value );
-	printf( "\t[--%s <sharpening gradient scale>=%e]\n" , Sharpen.name.c_str() , Sharpen.value );
-	printf( "\t[--%s <soft max p-norm>=%d]\n" , SoftMaxP.name.c_str() , SoftMaxP.value );
+	printf( "\t[--%s <sharpening step size>=%e]\n" , SharpeningWeight.name.c_str() , SharpeningWeight.value );
+	printf( "\t[--%s <sharpening scale>=%e]\n" , SharpeningScale.name.c_str() , SharpeningScale.value );
+	printf( "\t[--%s <p-norm>=%d]\n" , SoftMaxP.name.c_str() , SoftMaxP.value );
+	printf( "\t[--%s <planar 1-to-4 subdivision iterations>=%d]\n" , Subdivide.name.c_str() , Subdivide.value );
 	printf( "\t[--%s <random seed>=%d]\n" , RandomSeed.name.c_str() , RandomSeed.value );
 	printf( "\t[--%s]\n" , GrayScale.name.c_str() );
 	printf( "\t[--%s]\n" , Verbose.name.c_str() );
 }
+
+void
+PlanarSubdivide
+(
+	std::vector< Point< double , Dim > > & vertices ,
+	std::vector< SimplexIndex< K > > & simplices ,
+	std::vector< Point< double , Dim > > & vectorField
+)
+{
+	std::vector< SimplexIndex< K > > _simplices;
+	std::map< std::pair< unsigned int , unsigned int > , unsigned int > eMap;
+
+	auto EdgeKey = []( unsigned int v1 , unsigned int v2 ){ return v1<v2 ? std::make_pair( v1 , v2 ) : std::make_pair( v2 , v1 ); };
+
+	bool vertexVectors = vectorField.size()==vertices.size();
+	bool simplexVectors = vectorField.size()==simplices.size();
+
+	for( unsigned int i=0 ; i<simplices.size() ; i++ )
+	{
+		for( unsigned int k=0 ; k<=K ; k++ )
+		{
+			std::pair< unsigned int , unsigned int > eKey = EdgeKey( simplices[i][k] , simplices[i][(k+1)%(K+1)] );
+			if( eMap.find( eKey )==eMap.end() )
+			{
+				eMap[eKey] = static_cast< unsigned int >( vertices.size() );
+				vertices.push_back( ( vertices[ simplices[i][k] ] + vertices[ simplices[i][(k+1)%(K+1)] ] ) / 2 );
+				if( vertexVectors ) vectorField.push_back( ( vectorField[ simplices[i][k] ] + vectorField[ simplices[i][(k+1)%(K+1)] ] ) / 2 );
+			}
+		}
+	}
+
+	for( unsigned int i=simplices.size() ; i!=0 ; i-- )
+	{
+		unsigned int idx = i-1;
+		unsigned int edges[K+1];
+		for( unsigned int k=0 ; k<=K ; k++ ) edges[k] = eMap[ EdgeKey( simplices[idx][(k+1)%(K+1)] , simplices[idx][(k+2)%(K+1)] ) ];
+		for( unsigned int k=0 ; k<=K ; k++ )
+		{
+			simplices.emplace_back( simplices[idx][k] , static_cast< unsigned int >( edges[(k+2)%(K+1)] ) , static_cast< unsigned int >( edges[(k+1)%(K+1)] ) );
+			if( simplexVectors ) vectorField.push_back( vectorField[idx] );
+		}
+		simplices[idx] = SimplexIndex< K >( edges[0] , edges[1] , edges[2] );
+	}
+}
+
 
 std::vector< SquareMatrix< double , Dim > >
 LICMetric
@@ -168,23 +216,6 @@ LICMetric
 }
 
 template< unsigned int Degree >
-void
-AddProlongation
-(
-	const std::vector< SimplexIndex< K > > & simplices ,
-	std::vector< Eigen::SparseMatrix< double > > & Ps
-)
-{
-	if constexpr( Degree==0 ) ;
-	else
-	{
-		Ps.emplace_back( SimplexMesh< K , Degree >::Prolongation( simplices ) );
-		AddProlongation< Degree-1 >( simplices , Ps );
-	}
-}
-
-
-template< unsigned int Degree >
 std::vector< Point< double , Dim > >
 Execute
 (
@@ -242,12 +273,12 @@ Execute
 	}
 
 	// Perform the sharpening
-	if( Sharpen.value>0 )
+	if( SharpeningScale.value>0 )
 	{
 		Miscellany::PerformanceMeter pMeter;
 		LLtSolver solver( M + S * SharpeningWeight.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
-		x = solver.solve( M * x + S * x * SharpeningWeight.value * Sharpen.value );
+		x = solver.solve( M * x + S * x * SharpeningWeight.value * SharpeningScale.value );
 		if( Verbose.set ) std::cout << pMeter( "Solved sharpening" ) << std::endl;
 	}
 
@@ -310,14 +341,6 @@ main
 
 		if( factory.template plyValidReadProperties< 1 >( vertexReadParams ) )
 		{
-			faceVectorField.resize( simplices.size() );
-			for( unsigned int i=0 ; i<simplices.size() ; i++ )
-			{
-				Point< double , Dim > vf;
-				for( unsigned int k=0 ; k<=K ; k++ ) vf += _vertices[ simplices[i][k] ].template get<1>();
-				faceVectorField[i] = vf / static_cast< double >( K+1 );
-			}
-
 			vertexVectorField.resize( _vertices.size() );
 			for( unsigned int i=0 ; i<_vertices.size() ; i++ ) vertexVectorField[i] = _vertices[i].template get<1>();
 		}
@@ -332,10 +355,26 @@ main
 			faceVectorField.resize( simplices.size() );
 		}
 	}
+#if 1
+	if( vertexVectorField.size() )
+	{
+		for( unsigned int i=0 ; i<Subdivide.value ; i++ ) PlanarSubdivide( vertices , simplices , vertexVectorField );
+		faceVectorField.resize( simplices.size() );
+		for( unsigned int i=0 ; i<simplices.size() ; i++ )
+		{
+			Point< double , Dim > vf;
+			for( unsigned int k=0 ; k<=K ; k++ ) vf += vertexVectorField[ simplices[i][k] ];
+			faceVectorField[i] = vf / static_cast< double >( K+1 );
+		}
+	}
+	else for( unsigned int i=0 ; i<Subdivide.value ; i++ ) PlanarSubdivide( vertices , simplices , faceVectorField );
+#endif
+
 	if( Verbose.set ) std::cout << "Vertices / Triangles: " << vertices.size() << " / " << simplices.size() << std::endl;
 
 	Miscellany::Timer timer;
 	std::vector< Point< double , 3 > > colors;
+#if 1
 	{
 		Miscellany::PerformanceMeter pMeter;
 		switch( Degree.value )
@@ -347,6 +386,9 @@ main
 		}
 		if( Verbose.set ) std::cout << pMeter( "Performed LIC" ) << std::endl;
 	}
+#else
+	colors.resize( vertices.size() );
+#endif
 
 	auto ClampColor = []( Point< double , 3 > c )
 	{
