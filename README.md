@@ -1,4 +1,10 @@
 <center><h2>Line Integral Convolution on Surfaces (Version 1.00)</h2></center>
+<TABLE>
+<TR>
+<TD><img src="Images/bob.faces.vf.png" width="200">
+<TD><img src="Images/bob.faces.lic.png" width="200">
+</TR>
+</TABLE>
 <center>
 <a href="#LINKS">links</a>
 <a href="#EXECUTABLE">executable</a>
