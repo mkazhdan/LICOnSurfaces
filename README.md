@@ -65,6 +65,7 @@ This software supports line integral convolution on surfaces using anisotropic d
 <SUMMARY>
 <font size="+1"><b>LineIntegralConvolution</b></font>:
 Generates per-vertex colors visualizing the streamlines of a vector field. The vector field is obtained by seeding the nodes with random colors, performing anistropic diffusion along the vector-field direction, and then performing gradient-domain sharpening to accentuate the stream-lines.<BR>
+Prior to computation, the mesh is rescaled to have unit-norm and default parameters are set to that scale.
 </SUMMARY>
 <dt><b>--in</b> &lt;<i>input mesh</i>&gt;</dt>
 <dd> This mandatory string specifies the name of the file from which the mesh will be read.<BR>
@@ -81,12 +82,18 @@ The mesh is assumed to be represented in <A href="http://www.cc.gatech.edu/proje
 While color values are output per-vertex, using a higher degree interpolant generates finer feature lines.<BR>
 Degrees <CODE>1</CODE>, <CODE>2</CODE>, and <CODE>3</CODE> are supported.<BR>
 The default value for this argument is <CODE>2</CODE>.
+<dt>[<b>--dStep</b> &lt;<i>diffusion step-size</i>&gt;]
+<dd> This floating point value specifies the the extent of the diffusion. (Smaller values result in visualizations with shorter stream-lines.)<BR>
+The default value for this argument is <CODE>10<SUP>-5</SUP></CODE>.
 <dt>[<b>--sharpen</b> &lt;<i>gradient modulation weight</i>&gt;]
 <dd> This floating point value specifies the scale applied to the gradients when performing sharpening. (Larger values accentuate the stream-lines more.)<BR>
 The default value for this argument is <CODE>1024</CODE>.
 <dt>[<b>--sWeight</b> &lt;<i>sharpening weight</i>&gt;]
-<dd> This floating point value specifies the weight to be given to fitting the gradient term when performing sharpening. (Smaller values focus the sharpening on higher frequencies.).<BR>
+<dd> This floating point value specifies the weight to be given to fitting the gradient term when performing sharpening. (Smaller values focus the sharpening on higher frequencies.)<BR>
 The default value for this argument is <CODE>10<SUP>-5</SUP></CODE>.
+<dt>[<b>--p</b> &lt;<i>p-norm</i>&gt;]
+<dd> This integer specifies the <I>p</I>-norm used in estimating the scale of the vector field. (Larger values normalize using a value closer to the maximum vector length.)<BR>
+The default value for this argument is <CODE>8</CODE>.
 </DETAILS>
 </DL>
 
