@@ -69,6 +69,7 @@ CmdLineParameter< double >
 
 CmdLineReadable
 	GrayScale( "gray" ) ,
+	NoNormalize( "noNormalize" ) ,
 	Verbose( "verbose" );
 
 std::vector< CmdLineReadable * > params =
@@ -85,6 +86,7 @@ std::vector< CmdLineReadable * > params =
 	&RandomSeed ,
 	&GrayScale ,
 	&Subdivide ,
+	&NoNormalize ,
 	&Verbose
 };
 
@@ -108,6 +110,7 @@ ShowUsage
 	printf( "\t[--%s <planar 1-to-4 subdivision iterations>=%d]\n" , Subdivide.name.c_str() , Subdivide.value );
 	printf( "\t[--%s <random seed>=%d]\n" , RandomSeed.name.c_str() , RandomSeed.value );
 	printf( "\t[--%s]\n" , GrayScale.name.c_str() );
+	printf( "\t[--%s]\n" , NoNormalize.name.c_str() );
 	printf( "\t[--%s]\n" , Verbose.name.c_str() );
 }
 
@@ -372,6 +375,34 @@ main
 	}
 	else for( unsigned int i=0 ; i<Subdivide.value ; i++ ) PlanarSubdivide( vertices , simplices , faceVectorField );
 
+	XForm< double , Dim+1 > vXForm = XForm< double , Dim+1 >::Identity();
+	XForm< double , Dim > vfXForm;
+	{
+		auto GetSimplex = [&]( size_t s )
+		{
+			Simplex< double , Dim , K > simplex;
+			for( unsigned int k=0 ; k<=K ; k++ ) simplex[k] = vertices[ simplices[s][k] ];
+			return simplex;
+		};
+
+		Point< double , Dim > center;
+		double measure = 0;
+		for( unsigned int i=0 ; i<simplices.size() ; i++ )
+		{
+			Simplex< double , Dim , K > s = GetSimplex( i );
+			double m = s.measure();
+			center += s.center() * m;
+			measure += m;
+		}
+		center /= measure;
+		double scale = pow( measure , -1./K );
+		for( unsigned int d=0 ; d<Dim ; d++ ) vXForm(d,d) = scale , vXForm( Dim , d ) = -center[d] * scale;
+		for( unsigned int i=0 ; i<Dim ; i++ ) for( unsigned int j=0 ; j<Dim ; j++ ) vfXForm(i,j) = vXForm(i,j);
+	}
+	for( unsigned int i=0 ; i<vertices.size() ; i++ ) vertices[i] = vXForm( vertices[i] );
+	for( unsigned int i=0 ; i<faceVectorField.size() ; i++ ) faceVectorField[i] = vfXForm( faceVectorField[i] );
+	for( unsigned int i=0 ; i<vertexVectorField.size() ; i++ ) vertexVectorField[i] = vfXForm( vertexVectorField[i] );
+
 	if( Verbose.set ) std::cout << "Vertices / Triangles: " << vertices.size() << " / " << simplices.size() << std::endl;
 
 	Miscellany::Timer timer;
@@ -387,6 +418,14 @@ main
 			default: MK_ERROR_OUT( "Only degrees 1, 2, and 3 supported" );
 		}
 		if( Verbose.set ) std::cout << pMeter( "Performed LIC" ) << std::endl;
+	}
+
+	{
+		XForm< double , Dim+1 > _vXForm = vXForm.inverse();
+		XForm< double , Dim > _vfXForm = vfXForm.inverse();
+		for( unsigned int i=0 ; i<vertices.size() ; i++ ) vertices[i] = _vXForm( vertices[i] );
+		for( unsigned int i=0 ; i<faceVectorField.size() ; i++ ) faceVectorField[i] = _vfXForm( faceVectorField[i] );
+		for( unsigned int i=0 ; i<vertexVectorField.size() ; i++ ) vertexVectorField[i] = _vfXForm( vertexVectorField[i] );
 	}
 
 	auto ClampColor = []( Point< double , 3 > c )
