@@ -286,7 +286,12 @@ Execute
 		Miscellany::PerformanceMeter pMeter;
 		solver.factorize( M + S * DiffusionStepSize.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
+#ifdef USE_EIGEN_PARDISO
+		Eigen::MatrixXd b = M * x;
+		x = solver.solve( b );
+#else // !USE_EIGEN_PARDISO
 		x = solver.solve( M * x );
+#endif // USE_EIGEN_PARDISO
 		if( Verbose.set ) std::cout << pMeter( "Solved diffusion" ) << std::endl;
 	}
 
@@ -302,7 +307,12 @@ Execute
 
 		solver.factorize( M + S * SharpeningWeight.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
+#ifdef USE_EIGEN_PARDISO
+		Eigen::MatrixXd b = M * x + S * x * SharpeningWeight.value * SharpeningScale.value;
+		x = solver.solve( b );
+#else // !USE_EIGEN_PARDISO
 		x = solver.solve( M * x + S * x * SharpeningWeight.value * SharpeningScale.value );
+#endif // USE_EIGEN_PARDISO
 		if( Verbose.set ) std::cout << pMeter( "Solved sharpening" ) << std::endl;
 	}
 
