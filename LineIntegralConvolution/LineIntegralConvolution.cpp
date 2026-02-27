@@ -61,11 +61,12 @@ CmdLineParameter< unsigned int >
 	SoftMaxP( "p" , 8 );
 
 CmdLineParameter< double >
-	SharpeningWeight( "sWeight" , 1e-5 ) ,
-	DiffusionStepSize( "dStep" , 2.e-3 ) ,
-	AnisotropyExponent( "aExp" , 8. ) ,
-	AnisotropyScale( "aScale" , 1e8 ) ,
-	SharpeningScale( "sScale" , 1024 );
+	DiffusionStepSize( "dStep" , 1e-2 ) ,
+	AnisotropyExponent( "aExp" , 2. ) ,
+	AnisotropyScale( "aScale" , 100. ) ,
+	SharpeningWeight( "sWeight" , 1e-4 ) ,
+	SharpeningScale( "sScale" , 100. ) ,
+	Sigma( "sigma" , 0.4 );
 
 CmdLineReadable
 	GrayScale( "gray" ) ,
@@ -87,6 +88,7 @@ std::vector< CmdLineReadable * > params =
 	&GrayScale ,
 	&Subdivide ,
 	&NoNormalize ,
+	&Sigma ,
 	&Verbose
 };
 
@@ -109,6 +111,7 @@ ShowUsage
 	printf( "\t[--%s <p-norm>=%d]\n" , SoftMaxP.name.c_str() , SoftMaxP.value );
 	printf( "\t[--%s <planar 1-to-4 subdivision iterations>=%d]\n" , Subdivide.name.c_str() , Subdivide.value );
 	printf( "\t[--%s <random seed>=%d]\n" , RandomSeed.name.c_str() , RandomSeed.value );
+	printf( "\t[--%s <target color sigma>=%f]\n" , Sigma.name.c_str() , Sigma.value );
 	printf( "\t[--%s]\n" , GrayScale.name.c_str() );
 	printf( "\t[--%s]\n" , NoNormalize.name.c_str() );
 	printf( "\t[--%s]\n" , Verbose.name.c_str() );
@@ -168,36 +171,42 @@ LICMetric
 	unsigned int P
 )
 {
+	auto GetSimplex = [&]( size_t s )
+	{
+		Simplex< double , Dim , K > simplex;
+		for( unsigned int k=0 ; k<=K ; k++ ) simplex[k] = vertices[ simplices[s][k] ];
+		return simplex;
+	};
+
 	std::vector< SquareMatrix< double , Dim > > metric( simplices.size() );
 
 	// Normalizing the vector field magnitude
-	double softMax = 0;
+	double softMax = 0 , max = 0;
 	{
-		for( unsigned int i=0 ; i<simplices.size() ; i++ ) softMax += pow( Point< double , 3 >::Length( vectorField[i] ) , P );
-		softMax = pow( softMax / simplices.size() , 1./P );
-	}
-	if( Verbose.set ) std::cout << "Soft max: " << softMax << std::endl;
-
-	auto GetSimplex = [&]( size_t s )
+		double measure = 0;
+		for( unsigned int i=0 ; i<simplices.size() ; i++ )
 		{
-			Simplex< double , Dim , K > simplex;
-			for( unsigned int k=0 ; k<=K ; k++ ) simplex[k] = vertices[ simplices[s][k] ];
-			return simplex;
-		};
+			double mu = GetSimplex(i).measure();
+			double l = Point< double , 3 >::Length( vectorField[i] );
+			softMax += pow( l , P ) * mu , max = std::max< double >( max , l );
+			measure += mu;
+		}
+		softMax = pow( softMax / measure , 1./P );
+	}
+	if( Verbose.set ) std::cout << "Soft max / max: " << softMax << " / " << max << std::endl;
 
 	ThreadPool::ParallelFor
 		(
 			0 , simplices.size() ,
 			[&]( size_t s )
 			{
-				double scale = Point< double, Dim >::Length( vectorField[s] );
+				double scale = Point< double, Dim >::Length( vectorField[s] ) / softMax;
 				if( !scale ) metric[s] = SquareMatrix< double , K >::Identity();
 				else
 				{
 					Simplex< double , Dim , K > simplex = GetSimplex( s );
 					Point< double , Dim > p[] = { simplex.normal() , vectorField[s] };
 					OrthogonalFrame< Dim > frame( p , 2 );
-					scale /= softMax;
 
 					// Compute the change of basis from edges to the orthgonal tangent frame basis
 					SquareMatrix< double , K > X;
@@ -208,7 +217,7 @@ LICMetric
 					// =>  f(s) = a + s^b
 					SquareMatrix< double , 2 > D;
 					D(0,0) = 1.;
-					D(1,1) = ( 1. + pow( scale , AnisotropyExponent.value ) * AnisotropyScale.value );
+					D(1,1) = ( 1. + pow( scale * AnisotropyScale.value , AnisotropyExponent.value ) );
 
 					// Compute the metric tensor with respect to the orig
 					metric[s] = X.transpose() * D * X;
@@ -254,7 +263,7 @@ Execute
 	// Construct the simplex mesh with the associated metric
 	std::vector< SquareMatrix< double , Dim > > licMetric = LICMetric( vertices , simplices , vectorField , softMaxP );
 	SimplexMesh< K , Degree > simplexMesh = SimplexMesh< K , Degree >::Init( simplices , [&]( size_t s ){ return licMetric[s]; } );
-	simplexMesh.makeUnitVolume();
+	if( Verbose.set ) std::cout << "Anisotropic volume: " << simplexMesh.volume() << std::endl;
 	if( Verbose.set ) std::cout << pMeter( "Set metric" ) << std::endl;
 
 	Eigen::MatrixXd x( simplexMesh.nodes() , 3 );
@@ -266,20 +275,32 @@ Execute
 	Eigen::SparseMatrix< double > M = simplexMesh.mass() , S = simplexMesh.stiffness();
 	if( Verbose.set ) std::cout << pMeter( "Got system" ) << std::endl;
 
+	LLtSolver solver;
+	{
+		solver.analyzePattern( M );
+		if( Verbose.set ) std::cout << pMeter( "Analyzed" ) << std::endl;
+	}
+
 	// Perform the diffusion
 	{
 		Miscellany::PerformanceMeter pMeter;
-		LLtSolver solver( M + S * DiffusionStepSize.value );
+		solver.factorize( M + S * DiffusionStepSize.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
 		x = solver.solve( M * x );
 		if( Verbose.set ) std::cout << pMeter( "Solved diffusion" ) << std::endl;
 	}
 
 	// Perform the sharpening
-	if( SharpeningScale.value>0 )
+	if( SharpeningScale.value>=0 && SharpeningScale.value!=1. )
 	{
 		Miscellany::PerformanceMeter pMeter;
-		LLtSolver solver( M + S * SharpeningWeight.value );
+
+		// Construct the simplex mesh with the associated metric
+		SimplexMesh< K , Degree > simplexMesh = SimplexMesh< K , Degree >::template Init< Dim >( simplices , [&]( size_t v ){ return vertices[v]; } );
+		Eigen::SparseMatrix< double > M = simplexMesh.mass() , S = simplexMesh.stiffness();
+		if( Verbose.set ) std::cout << pMeter( "Got system" ) << std::endl;
+
+		solver.factorize( M + S * SharpeningWeight.value );
 		if( Verbose.set ) std::cout << pMeter( "Factored" ) << std::endl;
 		x = solver.solve( M * x + S * x * SharpeningWeight.value * SharpeningScale.value );
 		if( Verbose.set ) std::cout << pMeter( "Solved sharpening" ) << std::endl;
@@ -426,6 +447,37 @@ main
 		for( unsigned int i=0 ; i<vertices.size() ; i++ ) vertices[i] = _vXForm( vertices[i] );
 		for( unsigned int i=0 ; i<faceVectorField.size() ; i++ ) faceVectorField[i] = _vfXForm( faceVectorField[i] );
 		for( unsigned int i=0 ; i<vertexVectorField.size() ; i++ ) vertexVectorField[i] = _vfXForm( vertexVectorField[i] );
+	}
+
+	if( Sigma.value>0 )
+	{
+		auto GetSimplex = [&]( size_t s )
+		{
+			Simplex< double , Dim , K > simplex;
+			for( unsigned int k=0 ; k<=K ; k++ ) simplex[k] = vertices[ simplices[s][k] ];
+			return simplex;
+		};
+
+		double measure = 0;
+		Point< double , 3 > avg;
+		for( unsigned int i=0 ; i<simplices.size() ; i++ )
+		{
+			double mu = GetSimplex(i).measure() / (K+1);
+			for( unsigned int k=0 ; k<=K ; k++ ) avg += colors[ simplices[i][k] ] * mu;
+
+			measure += mu * (K+1);
+		}
+		avg /= measure;
+
+		double sigma = 0;
+		for( unsigned int i=0 ; i<simplices.size() ; i++ )
+		{
+			double mu = GetSimplex(i).measure() / (K+1);
+			for( unsigned int k=0 ; k<=K ; k++ ) sigma += pow( Point< double , 3 >::Length( avg - colors[ simplices[i][k] ] ) , SoftMaxP.value ) * mu;
+		}
+		sigma = pow( sigma / measure , 1./SoftMaxP.value );
+
+		for( unsigned int i=0 ; i<colors.size() ; i++ ) colors[i] = avg + ( colors[i] - avg ) / sigma * Sigma.value;
 	}
 
 	auto ClampColor = []( Point< double , 3 > c )
